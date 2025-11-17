@@ -31,8 +31,6 @@ resource "google_compute_subnetwork" "subnet_segura" {
 }
 
 # --- 2. REGRAS DE FIREWALL ---
-# Por padrão, o GCP bloqueia toda a entrada. Vamos manter assim,
-# exceto por duas regras cruciais:
 
 # Regra 1: Permite que VMs dentro da rede conversem entre si
 resource "google_compute_firewall" "allow_internal" {
@@ -46,7 +44,7 @@ resource "google_compute_firewall" "allow_internal" {
 }
 
 # Regra 2: Permite SSH APENAS do Google IAP (Identity-Aware Proxy)
-# Este é o nosso "portão" Zero Trust.
+
 resource "google_compute_firewall" "allow_iap_ssh" {
   name    = "allow-iap-ssh"
   network = google_compute_network.vpc_segura.id
@@ -56,8 +54,7 @@ resource "google_compute_firewall" "allow_iap_ssh" {
     ports    = ["22"] # Porta SSH
   }
   
-  # IPs mágicos do Google. Isso diz: "Permita SSH apenas
-  # se vier do serviço IAP do Google, que verifica a identidade."
+  # Permite SSH apenas se vier do serviço IAP do Google, que verifica a identidade.
   source_ranges = ["35.235.240.0/20"] 
   
   # Aplica esta regra apenas a VMs com a tag "allow-iap-ssh"
@@ -79,10 +76,10 @@ resource "google_compute_firewall" "allow_egress" {
 }
 
 # --- 3. VM (Bastion Host) ---
-# Cria nossa VM do nível gratuito
+# Cria nossa VM
 resource "google_compute_instance" "bastion_host" {
   name         = "bastion-host"
-  machine_type = "e2-micro" # Parte do "Always Free" do GCP
+  machine_type = "e2-micro" 
   zone         = var.gcp_zone
 
   boot_disk {
