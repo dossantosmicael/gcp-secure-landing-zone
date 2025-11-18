@@ -1,6 +1,6 @@
 variable "gcp_project_id" {
   type        = string
-  description = "projeto-landing-zone-478512"
+  description = "O ID do seu projeto no GCP."
 }
 
 variable "gcp_region" {
